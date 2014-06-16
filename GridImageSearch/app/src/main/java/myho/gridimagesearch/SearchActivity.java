@@ -1,6 +1,5 @@
 package myho.gridimagesearch;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuInflater;
 import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -23,7 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends SherlockFragmentActivity {
 
     private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8";
     private static final String OFFSET_FIELD = "&start=";
@@ -82,9 +83,10 @@ public class SearchActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search, menu);
-        return true;
+
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.main, (com.actionbarsherlock.view.Menu) menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
