@@ -1,17 +1,17 @@
 package myho.gridimagesearch;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends SherlockFragmentActivity {
 
     private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8";
     private static final String OFFSET_FIELD = "&start=";
@@ -34,11 +34,13 @@ public class SearchActivity extends Activity {
     //default
     private int resultOffset = 0;
 
-    private EditText etQuery;
     private StaggeredGridView gvResults;
-    private Button btnSearch;
     private List<ImageInfo> imageResults = new ArrayList<ImageInfo>();
     private ImageInfoArrayAdapter imageAdapter;
+
+    private SearchView searchView;
+
+    private String queryString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +77,39 @@ public class SearchActivity extends Activity {
     }
 
     private void setUpViews() {
-        etQuery = (EditText) findViewById(R.id.etQuery);
         gvResults = (StaggeredGridView) findViewById(R.id.gvResults);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search, menu);
-        return true;
+        // Inflate the options menu from XML; this adds items to the action bar if it is present.
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.search, (com.actionbarsherlock.view.Menu) menu);
+
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                queryString = query;
+                performQuery(queryString);
+
+                // hide keyboard and search box
+                searchItem.collapseActionView();
+
+                // hide only keyboard
+                searchView.onActionViewCollapsed();
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -94,19 +119,17 @@ public class SearchActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            displayFilterDialog();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void OnImageSearch(View view) {
-        getNewQueryData();
+    private void displayFilterDialog() {
+
     }
 
     private void getData() {
-        String query = etQuery.getText().toString();
-
-        String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(query);
+        String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(queryString);
         client.get(
                 absolute_url,
                 new JsonHttpResponseHandler() {
@@ -132,9 +155,7 @@ public class SearchActivity extends Activity {
         );
     }
 
-    private void getNewQueryData() {
-        String query = etQuery.getText().toString();
-
+    private void performQuery(String query) {
         String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(query);
         client.get(
                 absolute_url,
@@ -170,5 +191,9 @@ public class SearchActivity extends Activity {
 
         resultOffset = resultOffset + 8;
         getData();
+    }
+
+    public void setFilter(MenuItem item) {
+
     }
 }
