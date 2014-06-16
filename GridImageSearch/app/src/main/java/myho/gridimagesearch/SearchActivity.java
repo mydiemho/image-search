@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -25,10 +25,9 @@ import java.util.List;
 
 public class SearchActivity extends Activity {
 
-    private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?";
-    private static final String MAX_RESULTS = "rsz=8&"; // 8
-    private static final String OFFSET_FIELD = "start=";
-    private static final String API_VERSION = "&v=1.0&q=";
+    private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8";
+    private static final String OFFSET_FIELD = "&start=";
+    private static final String QUERY_FIELD = "&q=";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
@@ -36,7 +35,7 @@ public class SearchActivity extends Activity {
     private int resultOffset = 0;
 
     private EditText etQuery;
-    private GridView gvResults;
+    private StaggeredGridView gvResults;
     private Button btnSearch;
     private List<ImageInfo> imageResults = new ArrayList<ImageInfo>();
     private ImageInfoArrayAdapter imageAdapter;
@@ -64,11 +63,20 @@ public class SearchActivity extends Activity {
             }
         });
 
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                customLoadMoreDataFromApi(page);
+
+            }
+        });
+
     }
 
     private void setUpViews() {
         etQuery = (EditText) findViewById(R.id.etQuery);
-        gvResults = (GridView) findViewById(R.id.gvResults);
+        gvResults = (StaggeredGridView) findViewById(R.id.gvResults);
         btnSearch = (Button) findViewById(R.id.btnSearch);
     }
 
@@ -92,9 +100,42 @@ public class SearchActivity extends Activity {
     }
 
     public void OnImageSearch(View view) {
+        getNewQueryData();
+    }
+
+    private void getData() {
         String query = etQuery.getText().toString();
 
-        String absolute_url = BASE_URL + MAX_RESULTS + OFFSET_FIELD + resultOffset + API_VERSION + Uri.encode(query);
+        String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(query);
+        client.get(
+                absolute_url,
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+
+                        JSONArray imageJsonResults = null;
+
+                        try {
+                            imageJsonResults = response
+                                    .getJSONObject("responseData")
+                                    .getJSONArray("results");
+
+                            imageAdapter.addAll(
+                                    ImageInfo.fromJSONArray(imageJsonResults));
+
+                            Log.d("DEBUG", imageResults.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+    }
+
+    private void getNewQueryData() {
+        String query = etQuery.getText().toString();
+
+        String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(query);
         client.get(
                 absolute_url,
                 new JsonHttpResponseHandler() {
@@ -119,5 +160,15 @@ public class SearchActivity extends Activity {
                     }
                 }
         );
+    }
+
+    // Append more data into the adapter
+    private void customLoadMoreDataFromApi(int offset) {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+
+        resultOffset = resultOffset + 8;
+        getData();
     }
 }

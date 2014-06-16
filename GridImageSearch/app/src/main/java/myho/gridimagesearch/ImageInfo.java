@@ -12,17 +12,6 @@ public class ImageInfo implements Serializable{
     private String fullUrl;
     private String thumbUrl;
 
-    public ImageInfo(JSONObject jsonObject) {
-        try {
-            this.fullUrl = jsonObject.getString("url");
-            this.thumbUrl = jsonObject.getString("tbUrl");
-
-        } catch (JSONException e) {
-            this.fullUrl = null;
-            this.thumbUrl = null;
-        }
-    }
-
     public String getFullUrl() {
         return fullUrl;
     }
@@ -47,6 +36,17 @@ public class ImageInfo implements Serializable{
         }
 
         return results;
+    }
+
+    private ImageInfo(JSONObject jsonObject) {
+        try {
+            this.fullUrl = jsonObject.getString("url");
+            this.thumbUrl = jsonObject.getString("tbUrl");
+
+        } catch (JSONException e) {
+            this.fullUrl = null;
+            this.thumbUrl = null;
+        }
     }
 }
 

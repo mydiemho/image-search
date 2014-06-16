@@ -18,8 +18,11 @@ public class ImageInfoArrayAdapter extends ArrayAdapter<ImageInfo> {
     // default version return object's toString()
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        // get the data item for this position
         ImageInfo imageInfo = this.getItem(position);
         SmartImageView ivImage;
+
+        // check if an existing view is being reused, otherwise inflate the view
         if(convertView == null) {
             // instantiate the file into an in-memory java object
             LayoutInflater inflator = LayoutInflater.from(getContext());
