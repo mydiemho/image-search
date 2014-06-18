@@ -10,9 +10,52 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="filter_label">Narrow By:</string>
 
-    <string name="label_image_size_1">small</string>
-    <string name="label_image_size_2">medium</string>
-    <string name="label_image_size_3">large</string>
-    <string name="label_image_size_4">xlarge</string>
+    <string name="action_search">Search</string>
+
+    <string name="label_apply">Apply</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_image_type">Image Type</string>
+    <string name="label_image_color">Image Color</string>
+    <string name="label_image_size">Image Size</string>
+    <string name="hint_site">yahoo.com</string>
+    <string name="label_site">Site</string>
+
+
+    <string name="image_size_default">any size</string>
+    <string name="image_color_default">any color</string>
+    <string name="image_type_default">any type</string>
+
+    <string-array name="image_sizes">
+        <item>@string/image_size_default</item>
+        <item>icon</item>
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+        <item>xlarge</item>
+    </string-array>
+
+    <string-array name="image_colors">
+        <item>@string/image_color_default</item>
+        <item>black</item>
+        <item>blue</item>
+        <item>brown</item>
+        <item>gray</item>
+        <item>green</item>
+        <item>orange</item>
+        <item>pink</item>
+        <item>purple</item>
+        <item>red</item>
+        <item>teal</item>
+        <item>white</item>
+        <item>yellow</item>
+    </string-array>
+
+    <string-array name="image_types">
+        <item>@string/image_type_default</item>
+        <item>face</item>
+        <item>photo</item>
+        <item>clipart</item>
+        <item>lineart</item>
+    </string-array>
 
 </resources>

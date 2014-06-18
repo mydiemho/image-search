@@ -23,11 +23,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends SherlockFragmentActivity {
+public class SearchActivity extends SherlockFragmentActivity implements SearchFiltersDialog.SearchFiltersDialogListener{
 
     private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8";
     private static final String OFFSET_FIELD = "&start=";
     private static final String QUERY_FIELD = "&q=";
+    private static final String IMAGE_SIZE_FIELD = "&imgsz=";
+    private static final String IMAGE_COLOR_FIELD = "&imgcolor=";
+    private static final String IMAGE_TYPE_FIELD = "&imgtype=";
+    private static final String SITE_FIELD = "&as_sitesearch=";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
@@ -41,6 +45,7 @@ public class SearchActivity extends SherlockFragmentActivity {
     private SearchView searchView;
 
     private String queryString;
+    private FilterInfo filterInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,11 @@ public class SearchActivity extends SherlockFragmentActivity {
         imageAdapter = new ImageInfoArrayAdapter(this, imageResults);
         gvResults.setAdapter(imageAdapter);
 
+        setUpFullSizeImageDisplay();
+        setUpInfiniteScrolling();
+    }
+
+    private void setUpFullSizeImageDisplay() {
         // spin up intent to display full size image
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,7 +74,9 @@ public class SearchActivity extends SherlockFragmentActivity {
                 startActivity(intent);
             }
         });
+    }
 
+    private void setUpInfiniteScrolling() {
         gvResults.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
@@ -73,7 +85,6 @@ public class SearchActivity extends SherlockFragmentActivity {
 
             }
         });
-
     }
 
     private void setUpViews() {
@@ -86,16 +97,16 @@ public class SearchActivity extends SherlockFragmentActivity {
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.search, (com.actionbarsherlock.view.Menu) menu);
 
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
+        final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 queryString = query;
-                performQuery(queryString);
+                performQuery();
 
                 // hide keyboard and search box
-                searchItem.collapseActionView();
+                searchMenuItem.collapseActionView();
 
                 // hide only keyboard
                 searchView.onActionViewCollapsed();
@@ -118,20 +129,46 @@ public class SearchActivity extends SherlockFragmentActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            displayFilterDialog();
-        }
         return super.onOptionsItemSelected(item);
     }
 
-    private void displayFilterDialog() {
-
+    public void displaySearchFilter(MenuItem item) {
+        SearchFiltersDialog searchFiltersDialog = SearchFiltersDialog.newInstance("Advanced Search Options");
+        searchFiltersDialog.show(getFragmentManager(), "fragment_search_filters");
     }
 
+    @Override
+    public void onFinishSelectFilters(FilterInfo filterInfo) {
+        // if no new filters are added, do nothing
+        if(this.filterInfo != null && this.filterInfo.equals(filterInfo)) {
+            return;
+        }
+
+        // restart search whenever user apply new filter and query string is not null
+        this.filterInfo = filterInfo;
+        this.resultOffset = 0;
+        performQuery();
+
+//        if(queryString != null && !queryString.isEmpty()) {
+//            this.resultOffset = 0;
+//            performQuery();
+//        }
+    }
+
+    // Append more data into the adapter
+    private void customLoadMoreDataFromApi(int offset) {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+
+        resultOffset = resultOffset + 8;
+        getData();
+    }
+
+
     private void getData() {
-        String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(queryString);
         client.get(
-                absolute_url,
+                getAbsoluteUrl(),
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
@@ -155,10 +192,9 @@ public class SearchActivity extends SherlockFragmentActivity {
         );
     }
 
-    private void performQuery(String query) {
-        String absolute_url = BASE_URL + OFFSET_FIELD + resultOffset + QUERY_FIELD + Uri.encode(query);
+    private void performQuery() {
         client.get(
-                absolute_url,
+                getAbsoluteUrl(),
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
@@ -183,17 +219,44 @@ public class SearchActivity extends SherlockFragmentActivity {
         );
     }
 
-    // Append more data into the adapter
-    private void customLoadMoreDataFromApi(int offset) {
-        // This method probably sends out a network request and appends new data items to your adapter.
-        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
-        // Deserialize API response and then construct new objects to append to the adapter
+    private String getAbsoluteUrl()
+    {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(BASE_URL);
+        urlBuilder.append(OFFSET_FIELD);
+        urlBuilder.append(resultOffset);
+        urlBuilder.append(QUERY_FIELD);
+        urlBuilder.append(Uri.encode(queryString));
 
-        resultOffset = resultOffset + 8;
-        getData();
-    }
+        if (filterInfo != null) {
+            String imageSize = filterInfo.getImageSize();
+            if (!imageSize.equals(getString(R.string.image_size_default))) {
+                urlBuilder.append(IMAGE_SIZE_FIELD);
+                urlBuilder.append(imageSize);
+            }
 
-    public void setFilter(MenuItem item) {
+            String imageColor = filterInfo.getImageColor();
+            if (!imageColor.equals(getString(R.string.image_color_default))) {
+                urlBuilder.append(IMAGE_COLOR_FIELD);
+                urlBuilder.append(imageColor);
+            }
 
+            String imageType = filterInfo.getImageType();
+            if (!imageType.equals(getString(R.string.image_type_default))) {
+                urlBuilder.append(IMAGE_TYPE_FIELD);
+                urlBuilder.append(imageType);
+            }
+
+            String site = filterInfo.getSite();
+            if (site != null && !site.isEmpty()) {
+                urlBuilder.append(SITE_FIELD);
+                urlBuilder.append(site);
+            }
+        }
+
+        Log.i("SEARCH", "url: " + urlBuilder.toString());
+        return urlBuilder.toString();
     }
 }
+
+
