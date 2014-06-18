@@ -1,16 +1,30 @@
 package myho.gridimagesearch;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageInfo implements Serializable{
+public class ImageInfo implements Parcelable{
     private String fullUrl;
     private String thumbUrl;
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(fullUrl);
+        dest.writeString(thumbUrl);
+    }
 
     public String getFullUrl() {
         return fullUrl;
@@ -47,6 +61,11 @@ public class ImageInfo implements Serializable{
             this.fullUrl = null;
             this.thumbUrl = null;
         }
+    }
+
+    private ImageInfo(Parcel in){
+        this.fullUrl = in.readString();
+        this.thumbUrl = in.readString();
     }
 }
 
