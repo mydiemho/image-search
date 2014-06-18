@@ -142,7 +142,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
     public void displaySearchFilter(MenuItem item) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("filterInfo", filterInfo);
+        bundle.putParcelable("filterInfo", filterInfo);
         SearchFiltersDialog searchFiltersDialog = SearchFiltersDialog.newInstance("Advanced Search Options");
         // pass filterInfo to setting dialog
         searchFiltersDialog.setArguments(bundle);
@@ -172,6 +172,11 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
         // Deserialize API response and then construct new objects to append to the adapter
 
         resultOffset = resultOffset + 8;
+
+        if(resultOffset == 64) {
+            return;
+        }
+        // only load more if not at the end
         getData();
     }
 
@@ -197,7 +202,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                             imageAdapter.addAll(
                                     ImageInfo.fromJSONArray(imageJsonResults));
 
-                            Log.d("DEBUG", imageResults.toString());
+                            Log.i("REQUEST_RESULT", imageResults.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -44,7 +44,7 @@ public class SearchFiltersDialog extends DialogFragment implements OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        filterInfo = (FilterInfo) getArguments().getSerializable("filterInfo");
+        filterInfo = (FilterInfo) getArguments().getParcelable("filterInfo");
 
         View view = inflater.inflate(R.layout.fragment_search_filters, container);
 

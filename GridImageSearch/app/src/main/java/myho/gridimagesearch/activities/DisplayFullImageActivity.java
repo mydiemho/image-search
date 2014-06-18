@@ -17,7 +17,7 @@ public class DisplayFullImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_full_image);
 
-        ImageInfo imageInfo = (ImageInfo) getIntent().getSerializableExtra("imageInfo");
+        ImageInfo imageInfo = (ImageInfo) getIntent().getParcelableExtra("imageInfo");
         SmartImageView ivImage = (SmartImageView) findViewById(R.id.ivResult);
         ivImage.setImageUrl(imageInfo.getFullUrl());
     }

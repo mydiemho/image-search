@@ -1,10 +1,11 @@
 package myho.gridimagesearch.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.common.base.Objects;
 
-import java.io.Serializable;
-
-public class FilterInfo implements Serializable {
+public class FilterInfo implements Parcelable {
 
     private String imageSize;
     private String imageColor;
@@ -67,4 +68,34 @@ public class FilterInfo implements Serializable {
         result = 31 * result + site.hashCode();
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.imageSize);
+        dest.writeString(this.imageColor);
+        dest.writeString(this.imageType);
+        dest.writeString(this.site);
+    }
+
+    private FilterInfo(Parcel in) {
+        this.imageSize = in.readString();
+        this.imageColor = in.readString();
+        this.imageType = in.readString();
+        this.site = in.readString();
+    }
+
+    public static Parcelable.Creator<FilterInfo> CREATOR = new Parcelable.Creator<FilterInfo>() {
+        public FilterInfo createFromParcel(Parcel source) {
+            return new FilterInfo(source);
+        }
+
+        public FilterInfo[] newArray(int size) {
+            return new FilterInfo[size];
+        }
+    };
 }
