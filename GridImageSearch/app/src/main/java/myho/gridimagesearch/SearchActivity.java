@@ -20,10 +20,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends SherlockFragmentActivity implements SearchFiltersDialog.SearchFiltersDialogListener{
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+import org.apache.commons.io.FileUtils;
+
+public class SearchActivity extends SherlockFragmentActivity implements SearchFiltersDialog.SearchFiltersDialogListener {
 
     private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8";
     private static final String OFFSET_FIELD = "&start=";
@@ -44,7 +50,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
     private SearchView searchView;
 
-    private String queryString;
+    private String queryString = "";
     private FilterInfo filterInfo;
 
     @Override
@@ -102,6 +108,16 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if (query.isEmpty()) {
+                    Crouton.showText(getParent(), "Please enter a query", Style.INFO);
+                    return true;
+                }
+
+                // do nothing if query didn't change
+                if (queryString.equals(query)) {
+                    return true;
+                }
+
                 queryString = query;
                 resultOffset = 0;
                 getData();
@@ -141,16 +157,37 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
     @Override
     public void onFinishSelectFilters(FilterInfo filterInfo) {
         // if no new filters are added, do nothing
-        if(this.filterInfo != null && this.filterInfo.equals(filterInfo)) {
+        if (this.filterInfo != null && this.filterInfo.equals(filterInfo)) {
             return;
         }
 
         // restart search whenever user apply new filter and query string is not null
         this.filterInfo = filterInfo;
 
-        if(queryString != null && !queryString.isEmpty()) {
+        if (queryString != null && !queryString.isEmpty()) {
             this.resultOffset = 0;
             getData();
+        }
+    }
+
+    private void readItems() {
+        File filesDir = getFilesDir();
+        File filtersFile = new File(filesDir, "todo.txt");
+        try {
+            filterInfo = new FilterInfo(FileUtils.readLines(filtersFile));
+        } catch (IOException e) {
+            filterInfo = new FilterInfo();
+            e.printStackTrace();
+        }
+    }
+
+    private void writeItems() {
+        File filesDir = getFilesDir();
+        File filtersFile = new File(filesDir, "filters.txt");
+        try {
+            FileUtils.write(filtersFile, filterInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -163,7 +200,6 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
         resultOffset = resultOffset + 8;
         getData();
     }
-
 
     private void getData() {
         client.get(
@@ -179,7 +215,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                                     .getJSONObject("responseData")
                                     .getJSONArray("results");
 
-                            if(resultOffset == 0) {
+                            if (resultOffset == 0) {
                                 imageAdapter.clear();
                             }
 
@@ -195,8 +231,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
         );
     }
 
-    private String getAbsoluteUrl()
-    {
+    private String getAbsoluteUrl() {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(BASE_URL);
         urlBuilder.append(OFFSET_FIELD);

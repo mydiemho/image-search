@@ -7,16 +7,19 @@ import com.google.common.base.Objects;
 
 public class FilterInfo implements Parcelable {
 
-    private String imageSize;
-    private String imageColor;
-    private String imageType;
-    private String site;
+    private String imageSize = "any size";
+    private String imageColor = "any color";
+    private String imageType = "any type";
+    private String site = "";
 
     public FilterInfo(String imageSize, String imageColor, String imageType, String site) {
         this.imageSize = imageSize;
         this.imageColor = imageColor;
         this.imageType = imageType;
         this.site = site;
+    }
+
+    public FilterInfo() {
     }
 
     static final Parcelable.Creator<FilterInfo> CREATOR
