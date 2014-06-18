@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
-import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -45,7 +45,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
     //default
     private int resultOffset = 0;
 
-    private StaggeredGridView gvResults;
+    private GridView gvResults;
     private List<ImageInfo> imageResults = new ArrayList<ImageInfo>();
     private ImageInfoArrayAdapter imageAdapter;
 
@@ -77,6 +77,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                 ImageInfo imageInfo = imageResults.get(position);
                 intent.putExtra("imageInfo", imageInfo);
 
+                Log.i("FULL_SIZE", imageInfo.getThumbUrl());
                 // fire intent
                 startActivity(intent);
             }
@@ -95,7 +96,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
     }
 
     private void setUpViews() {
-        gvResults = (StaggeredGridView) findViewById(R.id.gvResults);
+        gvResults = (GridView) findViewById(R.id.gvResults);
     }
 
     @Override
@@ -182,12 +183,13 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
 
     private void getData() {
+        showProgressBar();
         client.get(
                 getAbsoluteUrl(),
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-
+                        hideProgressBar();
                         JSONArray imageJsonResults = null;
 
                         try {
@@ -248,6 +250,16 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
         Log.i("SEARCH", "url: " + urlBuilder.toString());
         return urlBuilder.toString();
+    }
+
+    // Should be called manually when an async task has started
+    public void showProgressBar() {
+        setProgressBarIndeterminateVisibility(true);
+    }
+
+    // Should be called when an async task has finished
+    public void hideProgressBar() {
+        setProgressBarIndeterminateVisibility(false);
     }
 }
 
