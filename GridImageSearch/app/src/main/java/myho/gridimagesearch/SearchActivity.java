@@ -44,7 +44,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
     private SearchView searchView;
 
-    private String queryString;
+    private String queryString = "";
     private FilterInfo filterInfo;
 
     @Override
@@ -103,7 +103,8 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
             @Override
             public boolean onQueryTextSubmit(String query) {
                 queryString = query;
-                performQuery();
+                resultOffset = 0;
+                getData();
 
                 // hide keyboard and search box
                 searchMenuItem.collapseActionView();
@@ -146,13 +147,11 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
         // restart search whenever user apply new filter and query string is not null
         this.filterInfo = filterInfo;
-        this.resultOffset = 0;
-        performQuery();
 
-//        if(queryString != null && !queryString.isEmpty()) {
-//            this.resultOffset = 0;
-//            performQuery();
-//        }
+        if(!queryString.isEmpty()) {
+            this.resultOffset = 0;
+            getData();
+        }
     }
 
     // Append more data into the adapter
@@ -180,33 +179,10 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                                     .getJSONObject("responseData")
                                     .getJSONArray("results");
 
-                            imageAdapter.addAll(
-                                    ImageInfo.fromJSONArray(imageJsonResults));
+                            if(resultOffset == 0) {
+                                imageAdapter.clear();
+                            }
 
-                            Log.d("DEBUG", imageResults.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        );
-    }
-
-    private void performQuery() {
-        client.get(
-                getAbsoluteUrl(),
-                new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-
-                        JSONArray imageJsonResults = null;
-
-                        try {
-                            imageJsonResults = response
-                                    .getJSONObject("responseData")
-                                    .getJSONArray("results");
-
-                            imageResults.clear();
                             imageAdapter.addAll(
                                     ImageInfo.fromJSONArray(imageJsonResults));
 
