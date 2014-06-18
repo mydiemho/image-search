@@ -1,4 +1,4 @@
-package myho.gridimagesearch;
+package myho.gridimagesearch.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -23,7 +23,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends SherlockFragmentActivity implements SearchFiltersDialog.SearchFiltersDialogListener{
+import myho.gridimagesearch.R;
+import myho.gridimagesearch.adapters.ImageInfoArrayAdapter;
+import myho.gridimagesearch.fragments.SearchFiltersDialog;
+import myho.gridimagesearch.helpers.EndlessScrollListener;
+import myho.gridimagesearch.models.FilterInfo;
+import myho.gridimagesearch.models.ImageInfo;
+
+public class SearchActivity extends SherlockFragmentActivity implements SearchFiltersDialog.SearchFiltersDialogListener {
 
     private static final String BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8";
     private static final String OFFSET_FIELD = "&start=";

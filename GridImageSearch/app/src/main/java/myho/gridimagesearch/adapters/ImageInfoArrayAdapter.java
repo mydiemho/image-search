@@ -1,4 +1,4 @@
-package myho.gridimagesearch;
+package myho.gridimagesearch.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.ArrayAdapter;
 import com.loopj.android.image.SmartImageView;
 
 import java.util.List;
+
+import myho.gridimagesearch.R;
+import myho.gridimagesearch.models.ImageInfo;
 
 public class ImageInfoArrayAdapter extends ArrayAdapter<ImageInfo> {
     public ImageInfoArrayAdapter(Context context, List<ImageInfo> images) {

@@ -1,4 +1,4 @@
-package myho.gridimagesearch;
+package myho.gridimagesearch.helpers;
 
 import android.widget.AbsListView;
 

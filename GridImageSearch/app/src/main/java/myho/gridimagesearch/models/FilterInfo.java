@@ -1,4 +1,4 @@
-package myho.gridimagesearch;
+package myho.gridimagesearch.models;
 
 import com.google.common.base.Objects;
 

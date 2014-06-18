@@ -24,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:entries="@array/image_sizes"/>
 
     </LinearLayout>
     <LinearLayout
@@ -43,7 +44,8 @@
             android:id="@+id/spinnerImageColors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginLeft="8dp"
+            android:entries="@array/image_colors"/>
 
     </LinearLayout>
 
@@ -63,7 +65,8 @@
             android:id="@+id/spinnerImageTypes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginLeft="8dp"
+            android:entries="@array/image_types"/>
     </LinearLayout>
 
     <LinearLayout

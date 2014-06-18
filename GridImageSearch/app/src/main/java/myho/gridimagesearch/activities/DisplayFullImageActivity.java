@@ -1,4 +1,4 @@
-package myho.gridimagesearch;
+package myho.gridimagesearch.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.loopj.android.image.SmartImageView;
+
+import myho.gridimagesearch.R;
+import myho.gridimagesearch.models.ImageInfo;
 
 public class DisplayFullImageActivity extends Activity {
 

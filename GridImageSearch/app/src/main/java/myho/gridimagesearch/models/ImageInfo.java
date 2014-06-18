@@ -1,4 +1,4 @@
-package myho.gridimagesearch;
+package myho.gridimagesearch.models;
 
 import org.json.JSONArray;
 import org.json.JSONException;
