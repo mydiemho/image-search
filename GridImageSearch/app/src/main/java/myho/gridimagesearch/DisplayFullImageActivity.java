@@ -2,6 +2,7 @@ package myho.gridimagesearch;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,7 +15,11 @@ public class DisplayFullImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_full_image);
 
-        ImageInfo imageInfo = (ImageInfo) getIntent().getSerializableExtra("imageInfo");
+        Bundle bundle = getIntent().getExtras();
+//        ImageInfo imageInfo = (ImageInfo) getIntent().getParcelableExtra("imageInfo");
+
+        ImageInfo imageInfo = (ImageInfo) bundle.get("imageInfo");
+        Log.i(this.toString(), "Fullurl: " + imageInfo.getFullUrl());
         SmartImageView ivImage = (SmartImageView) findViewById(R.id.ivResult);
         ivImage.setImageUrl(imageInfo.getFullUrl());
     }
@@ -32,9 +37,6 @@ public class DisplayFullImageActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 }

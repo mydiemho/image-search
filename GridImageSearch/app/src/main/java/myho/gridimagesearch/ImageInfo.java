@@ -14,6 +14,17 @@ public class ImageInfo implements Parcelable{
     private String fullUrl;
     private String thumbUrl;
 
+    public static final Parcelable.Creator<ImageInfo> CREATOR
+            = new Parcelable.Creator<ImageInfo>() {
+
+        public ImageInfo createFromParcel(Parcel in) {
+            return new ImageInfo(in);
+        }
+
+        public ImageInfo[] newArray(int size) {
+            return new ImageInfo[size];
+        }
+    };
 
     @Override
     public int describeContents() {

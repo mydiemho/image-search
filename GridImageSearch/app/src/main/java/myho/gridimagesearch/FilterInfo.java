@@ -22,7 +22,7 @@ public class FilterInfo implements Parcelable {
     public FilterInfo() {
     }
 
-    static final Parcelable.Creator<FilterInfo> CREATOR
+    public static final Parcelable.Creator<FilterInfo> CREATOR
             = new Parcelable.Creator<FilterInfo>() {
 
         public FilterInfo createFromParcel(Parcel in) {

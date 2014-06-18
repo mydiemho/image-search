@@ -20,14 +20,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import org.apache.commons.io.FileUtils;
 
 public class SearchActivity extends SherlockFragmentActivity implements SearchFiltersDialog.SearchFiltersDialogListener {
 
@@ -72,6 +69,8 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Log.i("INFO", "click on image");
                 Intent intent = new Intent(getApplicationContext(), DisplayFullImageActivity.class);
                 ImageInfo imageInfo = imageResults.get(position);
                 intent.putExtra("imageInfo", imageInfo);
@@ -169,27 +168,37 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
             getData();
         }
     }
-
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File filtersFile = new File(filesDir, "todo.txt");
-        try {
-            filterInfo = new FilterInfo(FileUtils.readLines(filtersFile));
-        } catch (IOException e) {
-            filterInfo = new FilterInfo();
-            e.printStackTrace();
-        }
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File filtersFile = new File(filesDir, "filters.txt");
-        try {
-            FileUtils.write(filtersFile, filterInfo);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//
+//    private void readItems() {
+////        File filesDir = getFilesDir();
+////        File filtersFile = new File(filesDir, "todo.txt");
+////        try {
+////            filterInfo = new FilterInfo(FileUtils.readLines(filtersFile));
+////        } catch (IOException e) {
+////            filterInfo = new FilterInfo();
+////            e.printStackTrace();
+////        }
+//    }
+//
+//    private void writeItems() {
+////        File filesDir = getFilesDir();
+////        File filtersFile = new File(filesDir, "filters.txt");
+////        try {
+////            FileUtils.write(filtersFile, filterInfo);
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////        }
+//
+//        try {
+//            FileOutputStream fos = openFileOutput("DayTwentyTwoFile", Context.MODE_PRIVATE);
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//            oos.write(filterInfo);
+//            fos.write(filterInfo);
+//            fos.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     // Append more data into the adapter
     private void customLoadMoreDataFromApi(int offset) {
