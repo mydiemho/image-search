@@ -141,7 +141,11 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
     }
 
     public void displaySearchFilter(MenuItem item) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("filterInfo", filterInfo);
         SearchFiltersDialog searchFiltersDialog = SearchFiltersDialog.newInstance("Advanced Search Options");
+        // pass filterInfo to setting dialog
+        searchFiltersDialog.setArguments(bundle);
         searchFiltersDialog.show(getFragmentManager(), "fragment_search_filters");
     }
 
