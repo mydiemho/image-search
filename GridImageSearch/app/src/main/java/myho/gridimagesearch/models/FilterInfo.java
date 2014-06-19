@@ -16,7 +16,7 @@ public class FilterInfo implements Parcelable {
         this.imageSize = imageSize;
         this.imageColor = imageColor;
         this.imageType = imageType;
-        this.site = site;
+        this.site = site.trim();
     }
 
     public String getImageSize() {

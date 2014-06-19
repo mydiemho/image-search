@@ -1,9 +1,11 @@
 package myho.gridimagesearch.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -23,6 +25,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Configuration;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import myho.gridimagesearch.R;
 import myho.gridimagesearch.adapters.ImageInfoArrayAdapter;
 import myho.gridimagesearch.fragments.SearchFiltersDialog;
@@ -183,13 +188,11 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
 
     private void getData() {
-        showProgressBar();
         client.get(
                 getAbsoluteUrl(),
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        hideProgressBar();
                         JSONArray imageJsonResults = null;
 
                         try {
@@ -204,6 +207,9 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                             imageAdapter.addAll(
                                     ImageInfo.fromJSONArray(imageJsonResults));
 
+                            if(imageResults.toString().isEmpty()) {
+                                warnUser();
+                            }
                             Log.i("REQUEST_RESULT", imageResults.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -211,6 +217,20 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                     }
                 }
         );
+    }
+
+    private void warnUser() {
+
+        String msg = "No result found for query=" + queryString + "filters: " + filterInfo.toString();
+
+        Configuration croutonConfiguration = new Configuration.Builder().setDuration(2500).build();
+        Style style = new Style.Builder()
+                .setBackgroundColorValue(Color.parseColor("#daffc0"))
+                .setGravity(Gravity.CENTER_HORIZONTAL)
+                .setConfiguration(croutonConfiguration)
+                .setHeight(150)
+                .setTextColorValue(Color.parseColor("#323a2c")).build();
+        Crouton.showText(this, "No result found", style);
     }
 
     private String getAbsoluteUrl()
@@ -250,16 +270,6 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
         Log.i("SEARCH", "url: " + urlBuilder.toString());
         return urlBuilder.toString();
-    }
-
-    // Should be called manually when an async task has started
-    public void showProgressBar() {
-        setProgressBarIndeterminateVisibility(true);
-    }
-
-    // Should be called when an async task has finished
-    public void hideProgressBar() {
-        setProgressBarIndeterminateVisibility(false);
     }
 }
 
