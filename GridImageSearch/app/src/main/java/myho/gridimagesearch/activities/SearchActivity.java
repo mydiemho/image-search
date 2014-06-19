@@ -158,14 +158,14 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
     @Override
     public void onFinishSelectFilters(FilterInfo filterInfo) {
         // if no new filters are added, do nothing
-        if(this.filterInfo != null && this.filterInfo.equals(filterInfo)) {
+        if (this.filterInfo != null && this.filterInfo.equals(filterInfo)) {
             return;
         }
 
         // restart search whenever user apply new filter and query string is not null
         this.filterInfo = filterInfo;
 
-        if(!queryString.isEmpty()) {
+        if (!queryString.isEmpty()) {
             this.resultOffset = 0;
             getData();
         }
@@ -179,7 +179,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
         resultOffset = resultOffset + 8;
 
-        if(resultOffset == 64) {
+        if (resultOffset == 64) {
             return;
         }
         // only load more if not at the end
@@ -200,17 +200,17 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                                     .getJSONObject("responseData")
                                     .getJSONArray("results");
 
-                            if(resultOffset == 0) {
+                            if (resultOffset == 0) {
                                 imageAdapter.clear();
+                            }
+
+                            if(imageJsonResults.length() == 0){
+                                Log.i("SEARCH_ACTIVITY", "Call Warn user");
+                                warnUser();
                             }
 
                             imageAdapter.addAll(
                                     ImageInfo.fromJSONArray(imageJsonResults));
-
-                            if(imageResults.toString().isEmpty()) {
-                                warnUser();
-                            }
-                            Log.i("REQUEST_RESULT", imageResults.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -220,21 +220,20 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
     }
 
     private void warnUser() {
-
+        Log.i("SEARCH_ACTIVITY", "Warn user");
         String msg = "No result found for query=" + queryString + "filters: " + filterInfo.toString();
 
-        Configuration croutonConfiguration = new Configuration.Builder().setDuration(2500).build();
+        Configuration croutonConfiguration = new Configuration.Builder().setDuration(4000).build();
         Style style = new Style.Builder()
                 .setBackgroundColorValue(Color.parseColor("#daffc0"))
                 .setGravity(Gravity.CENTER_HORIZONTAL)
                 .setConfiguration(croutonConfiguration)
                 .setHeight(150)
                 .setTextColorValue(Color.parseColor("#323a2c")).build();
-        Crouton.showText(this, "No result found", style);
+        Crouton.makeText(this, msg, style).show();
     }
 
-    private String getAbsoluteUrl()
-    {
+    private String getAbsoluteUrl() {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(BASE_URL);
         urlBuilder.append(OFFSET_FIELD);
