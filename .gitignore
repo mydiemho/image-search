@@ -28,8 +28,8 @@ proguard/
 *.iws
 .idea/
 
+# Other
 *.pydevproject
-.project
 .metadata
 bin/**
 tmp/**
@@ -38,8 +38,6 @@ tmp/**/*
 *.bak
 *.swp
 *~.nib
-local.properties
-.classpath
 .settings/
 .loadpath
 
@@ -55,3 +53,6 @@ local.properties
 # PDT-specific
 .buildpath
 
+# Gradle files
+.gradle/
+build/
