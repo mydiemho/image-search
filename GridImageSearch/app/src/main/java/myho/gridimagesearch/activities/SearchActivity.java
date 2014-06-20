@@ -110,20 +110,22 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.search, (com.actionbarsherlock.view.Menu) menu);
 
-        final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchMenuItem.getActionView();
+        final MenuItem menuItemSearch = menu.findItem(R.id.action_search);
+        searchView = (SearchView) menuItemSearch.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+                if( queryString.equals(query)) {
+                    return true;
+                }
+
                 queryString = query;
                 resultOffset = 0;
                 getData();
 
-                // hide keyboard and search box
-                searchMenuItem.collapseActionView();
-
-                // hide only keyboard
-                searchView.onActionViewCollapsed();
+                // hide soft keyboard when user is done with input
+                searchView.clearFocus();
 
                 return true;
             }
@@ -188,6 +190,7 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
 
     private void getData() {
+        showProgressBar();
         client.get(
                 getAbsoluteUrl(),
                 new JsonHttpResponseHandler() {
@@ -196,6 +199,8 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
                         JSONArray imageJsonResults = null;
 
                         try {
+//                            hideProgressBar();
+
                             imageJsonResults = response
                                     .getJSONObject("responseData")
                                     .getJSONArray("results");
@@ -269,6 +274,16 @@ public class SearchActivity extends SherlockFragmentActivity implements SearchFi
 
         Log.i("SEARCH", "url: " + urlBuilder.toString());
         return urlBuilder.toString();
+    }
+
+    // Should be called manually when an async task has started
+    public void showProgressBar() {
+        setProgressBarIndeterminateVisibility(true);
+    }
+
+    // Should be called when an async task has finished
+    public void hideProgressBar() {
+        setProgressBarIndeterminateVisibility(false);
     }
 }
 

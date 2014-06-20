@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import myho.gridimagesearch.R;
@@ -24,6 +25,8 @@ public class DisplayFullImageActivity extends Activity {
 
         Log.i("FULL_IMAGE", "thumbUrl: " + imageInfo.getThumbUrl() + "; fullUrl: " + imageInfo.getFullUrl());
 
+        setProgressBarIndeterminateVisibility(true);
+
         Picasso
                 .with(this)
                 .load(imageInfo.getFullUrl())
@@ -34,7 +37,17 @@ public class DisplayFullImageActivity extends Activity {
                 // scale the image honoring the aspect ratio until it fills the size. Crop either
                 // the top and bottom or left and right so it matches the size exactly.
                 .centerCrop()
-                .into(ivImage);
+                .into(ivImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        setProgressBarIndeterminateVisibility(false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        setProgressBarIndeterminateVisibility(false);
+                    }
+                });
     }
 
     @Override
@@ -55,4 +68,6 @@ public class DisplayFullImageActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }
