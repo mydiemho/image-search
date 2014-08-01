@@ -26,7 +26,7 @@ Completed user stories:
  * [x] Stretch: Use the StaggeredGridView to display visually interesting image results
     * StaggeredGridView does not behave with infinite scroll
  
-Tips:
+## Gotchas
 
 * Etsy's AndroidStaggeredGrid does not behave with endless scroling.
     * gridview item does not respond to click after a user scroll.
@@ -34,14 +34,19 @@ Tips:
 * Loading images asynchronously in gridView
     * Must declared fixed size for each grid view item.  DO NOT use "wrap_content" in R.layout.adapter_item.xml, else Gridview will never finish loading.
 
-Play with following libraries:
-* ParcelableGenerator to auto generate boiler code for Parcelable classes
-* SmartImageView for loading image from url
-* Etsy's AndroidStaggeredGrid for multi-column staggered grids
-* ActionBarSherlock for backward compatibility.
-* Picasso
+## Acknowledgements
 
-Walkthrough of all user stories:
+image-search is built on the [Google Image Search API](https://developers.google.com/image-search/v1/jsondevguide#json_snippets_java)
+and uses many great open-source libraries from the Android dev community:
+
+* [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) for a
+  consistent, great looking header across all Android platforms.
+* [ParcelableGenerator] (https://github.com/mcharmas/android-parcelable-intellij-plugin)
+  to auto generate boiler code for Parcelable classes.
+* [Picassco] (http://square.github.io/picasso/) for image loading.
+
+
+## Walkthrough
 
 ![Video Walkthrough](imageSearch.gif)
 
